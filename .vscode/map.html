@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bản đồ vị trí người dùng</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 100vh; }
+
+        /* CSS cho avatar hình tròn */
+        .avatar-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const userData = JSON.parse(localStorage.getItem("userData"));
+
+            if (!userData) {
+                alert("Bạn cần đăng nhập trước khi sử dụng bản đồ.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+
+                    // Cập nhật vị trí người dùng lên server
+                    fetch('/api/update-location', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: userData.user_id, lat: userLat, lng: userLng })
+                    }).catch((err) => console.error("Lỗi khi cập nhật vị trí:", err));
+
+                    // Khởi tạo bản đồ Leaflet
+                    const map = L.map('map').setView([userLat, userLng], 13);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 18,
+                        attribution: '© OpenStreetMap contributors'
+                    }).addTo(map);
+
+                    // Tạo icon cho người dùng
+                    const userIcon = L.divIcon({
+                        html: `<img src="${userData.photos[0]}" class="avatar-icon">`,
+                        iconSize: [50, 50],
+                        className: 'user-avatar'
+                    });
+
+                    // Thêm avatar của người dùng vào bản đồ
+                    const userMarker = L.marker([userLat, userLng], { icon: userIcon })
+                        .addTo(map)
+                        .bindTooltip(`<strong>${userData.name}</strong><br>Email: ${userData.email}<br>Giới tính: ${userData.gender}<br>Sinh nhật: ${userData.birthday}`);
+
+                    userMarker.on('mouseover', function (e) {
+                        userMarker.openTooltip();
+                    });
+
+                    // Lấy danh sách người dùng gần đó từ API
+                    fetch(`/api/nearby-users?lat=${userLat}&lng=${userLng}&userId=${userData.user_id}`)
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error("Không thể lấy danh sách người dùng gần đó.");
+                            }
+                            return response.json();
+                        })
+                        .then((nearbyUsers) => {
+                            nearbyUsers.forEach(user => {
+                                const nearbyIcon = L.divIcon({
+                                    html: `<img src="${user.photos}" class="avatar-icon">`,
+                                    iconSize: [50, 50],
+                                    className: 'nearby-avatar'
+                                });
+
+                                const marker = L.marker([user.lat, user.lng], { icon: nearbyIcon })
+                                    .addTo(map)
+                                    .bindTooltip(`<strong>${user.name}</strong><br>Email: ${user.email}<br>Giới tính: ${user.gender}<br>Sinh nhật: ${user.birthday}`);
+
+                                marker.on('mouseover', function (e) {
+                                    marker.openTooltip();
+                                });
+                            });
+                        })
+                        .catch((err) => console.error("Lỗi khi lấy danh sách người dùng gần đó:", err));
+                },
+                (error) => {
+                    alert("Không thể lấy vị trí hiện tại của bạn. Vui lòng bật định vị.");
+                }
+            );
+        });
+    </script>
+</body>
+</html>

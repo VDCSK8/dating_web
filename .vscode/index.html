@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <title>Dating App</title>
+
+    <!-- Firebase SDK từ phiên bản 8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <!-- Kết nối Firebase -->
+    <script src="auth.js" defer></script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo" onclick="location.reload()">
+            <img src="images/logo.png" alt="Logo">
+        </div>        
+        <nav class="menu">
+            <ul class="left-menu">
+                <li><a href="#" id="learn-more">Tìm hiểu</a></li>
+                <li><a href="#" id="support-link">Hỗ trợ</a></li>
+            </ul>
+            <ul class="right-menu">
+                <li><a href="login.html">Đăng Nhập</a></li>
+                <li><a href="register.html">Đăng ký</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Popup khi nhấn "Tìm hiểu" -->
+    <div id="info-popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup()">&times;</span>
+            <h2>Tại sao bạn nên chọn ứng dụng hẹn hò Datting?</h2>
+            <p>
+                Khi nói tới ứng dụng hẹn hò, bạn có nhiều lựa chọn: Badoo, Bumble, Joyride, Match, POF, OKCupid và ngay cả Instagram hay Facebook.
+                Tuy nhiên, ứng dụng của chúng tôi mang lại trải nghiệm độc đáo với nhiều tính năng giúp bạn dễ dàng tìm kiếm kết nối phù hợp.
+            </p>
+        </div>
+    </div>
+
+    <!-- Popup khi nhấn "Hỗ trợ" -->
+    <div id="support-popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closeSupportPopup()">&times;</span>
+            <h2>Hỗ trợ</h2>
+            <ul>
+                <li><i class="fas fa-phone-alt"></i> Hotline: <a href="tel:+0372684168">+0372684168</a></li>
+                <li><i class="fab fa-facebook"></i> Facebook: <a href="https://www.facebook.com/minhblabla/" target="_blank">Facebook Admin</a></li>
+                <li><i class="fas fa-envelope"></i> Email: <a href="mailto:admin@dattingapp.com">admin@dattingapp.com</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Biểu tượng mạng xã hội -->
+    <div class="social-icons">
+        <a href="https://www.facebook.com" target="_blank" class="icon facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com" target="_blank" class="icon instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.tiktok.com" target="_blank" class="icon tiktok"><i class="fab fa-tiktok"></i></a>
+    </div>
+    
+</body>
+</html>
